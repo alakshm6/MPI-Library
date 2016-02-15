@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#
+# 9/13/12
+# Christopher Mauney
+#
+# A simple script to have ssh run
+# a file on a host provded in nodefile
+#
+# Usage:
+#	./simple_mpirun [NP] [NODEFILE] [CMD]
+#
+# NP = number of processors
+# NODEFILE = full path to nodefile
+# CMD = the command to run on the remote host (usually a binary)
+#
+
+[ $# -ne 3 ] && { echo "Usage: $0 [np] [nodefile] [cmd]"; exit 1; }
+
+# grab the arguements
+NP=$2
+NODEFILE=$PBS_NODEFILE
+NODE_NAMES=`cat "$NODEFILE" | tr '\n' ','`
+CMD=$3
+
+#check nodefile
+[ ! -f $NODEFILE ] && { echo "$NODEFILE not found.  sorry!"; exit 1; }
+
+#for each item in nodefile, connect via ssh and run the cmd.
+#the "-n" parameter is important, or ssh will consume the rest
+#of the loop list in stdin
+rank=0
+echo "$CMD"
+echo "Catting nodefile"
+cat $NODEFILE
+echo "Catted nodefile"
+cat $NODEFILE | while read node; do
+	echo "#############################################################################################"
+	echo "CONNECTING TO NEW NODE"
+	echo "RANK : $rank"
+	echo "NODE BEING SPAWNED : $node"
+	ssh -n $node "$CMD \"${NODE_NAMES}\" \"$NP\" \"${rank}\"" &
+	rank=$((rank+1))
+	echo "#############################################################################################"
+done
+sleep 5m

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#echo "Hello!  I'm an echo!"
+echo "Spawner Argument : $1"
+echo "Spawner Argument :$2"
+echo "Rank : $3"
+/home/temp1020/p1 "$1" "$2" "$3"

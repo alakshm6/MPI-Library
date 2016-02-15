@@ -1,0 +1,25 @@
+#!/bin/sh
+#PBS -N mympi
+#PBS -l nodes=16:ppn=1,walltime=00:06:00
+#PBS -q default
+#PBS -o mympi.out
+#PBS -e mympi.err
+
+echo
+echo PBS JOB id is $PBS_JOBID
+echo PBS_NODEFILE is $PBS_NODEFILE
+echo PBS_QUEUE is $PBS_QUEUE
+NPROCS=`wc -l < $PBS_NODEFILE`
+echo
+
+hostname
+
+echo
+cat $PBS_NODEFILE
+echo NPROCS: $NPROCS
+
+echo
+NODE_NAMES=`cat $PBS_NODEFILE`
+echo "${NODE_NAMES}"
+/home/temp1020/mympirun -np 16 /home/temp1020/myrtt
+
